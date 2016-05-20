@@ -1,0 +1,125 @@
+# -- Ratpoison config by p6
+unmanage panel
+unmanage conky
+unmanage conky-cli
+startup_message on
+ 
+# -- Mod4-t to escape
+escape s-t
+bind Escape abort
+ 
+# {{{ rudeness is a bitwise or of the following values:
+# 1 Transient windows may raise.
+# 2 Normal windows may raise.
+# 4 New transient windows end up in the foreground.
+# 8 New normal windows end up in the foreground.
+rudeness 12
+# }}}
+ 
+warp on
+ 
+# {{{ Bar
+set wingravity center
+set transgravity center
+set bargravity n
+set border 0 0
+set barborder 1
+set padding 0 16 0 0
+set barpadding 1 1
+set inputwidth 100
+set font -*-fixed-*-*-*-*-9-*-*-*-*-*-*-*
+#set bgcolor black
+set fgcolor #4ca04c
+msgwait 3
+# }}}
+ 
+ 
+# -- Printscreen
+definekey top Print exec scrot -d 2 ~/Documents/screenshots/ss-%Y-%m-%d.png && ratpoison -c "echo screenshot saved as `%Y-%m-%d`!"
+
+definekey top s-c exec xterm
+
+alias sshot exec import -window root ~/screenshot-$(date +%F).jpg
+definekey top s-p sshot
+ 
+# --- Use the name of the program rather than the title in the window list
+set winname name
+ 
+# {{{ Storing layouts in three slots
+# -- bind Mod4-! to store the current frame layout in slot #1
+definekey top s-exclam exec ratpoison -c "setenv fs1 `ratpoison -c 'fdump'`" && exec ratpoison -c "echo layout stored in slot #1"
+# -- bind Mod4-1 to restore the frame layout in slot #1
+definekey top s-1 exec ratpoison -c "frestore `ratpoison -c 'getenv fs1'`"
+# -- Do the same for slot #2 and bind it to Mod4-@ and Mod4-2, respectively.
+definekey top s-at exec ratpoison -c "setenv fs2 `ratpoison -c 'fdump'`" && exec ratpoison -c "echo layout stored in slot #2"
+definekey top s-2 exec ratpoison -c "frestore `ratpoison -c 'getenv fs2'`"
+# -- Give ourselves another slot on Mod4-# and Mod4-3, respectively.
+definekey top s-numbersign exec ratpoison -c "setenv fs3 `ratpoison -c 'fdump'`"&& exec ratpoison -c "echo layout stored in slot #3"
+definekey top s-3 exec ratpoison -c "frestore `ratpoison -c 'getenv fs3'`"
+# }}}
+ 
+# {{{ Sticky Windows
+bind d dedicate
+bind s-d dedicate
+# }}}
+ 
+# {{{ Workspaces
+definekey top s-1 exec rpws 1
+definekey top s-2 exec rpws 2
+definekey top s-3 exec rpws 3
+definekey top s-4 exec rpws 4
+definekey top s-5 exec rpws 5
+definekey top s-6 exec rpws 6
+definekey top s-7 exec rpws 7
+definekey top s-8 exec rpws 8
+definekey top s-9 exec rpws 9
+# }}}
+ 
+# {{{ Startup
+# -- Init nine workspaces
+exec rpws init 9 -k
+exec xsetroot -bg black -cursor_name left_ptr &
+# }}}
+
+#virtual desks
+#gnewbg one
+#gnewbg two
+   
+exec xmodmap -quiet ~/.Xmodmap
+exec nm-applet
+exec trayer
+exec scim -d
+#exec gnome-keyring-daemon
+
+bind c exec xterm
+
+####exec xplanet -origin iapetus -body sun -radius 4 -date 18891102.103000
+##exec xplanet -origin callisto -body io -radius 3 -config config -date 19971111.034500 
+####This is an alternative- setting electricsheep as the background.
+####exec electricsheep --root 1 --nick maru --zoom 1 --mplayer 1 --history 50 &. 
+###Set a background, randomly picking from a certain directory.
+####exec cd ~/Pictures/OG/ && xsetbg -border black -fork -type jpeg -fit -onroot -fullscreen `w=(*.jpg); n=${#w[@]}; echo "${w[RANDOM%n]}"` && cd ~/
+#exec xsetbg -border black -fork -type jpeg -fit -onroot -fullscreen `w=(*.jpg); n=${#w[@]}; echo "~/pics/${w[RANDOM%n]}"`
+#exec feh --bg-scale ~/Pictures/Do-Dham/Do-Dham/Image181.jpg
+exec feh --bg-scale ~/Pictures/mantralaya/IMG_9850.JPG   
+###Run unclutter so the mouse hangs around no longer than needed.
+exec unclutter -idle 1 -jitter 2 -root
+   
+###I use xscreensaver as a screensaver. The first line makes sure any running xscreensaver is killed.
+###The second starts and backgrounds xscreensaver
+exec xscreensaver-command -exit
+exec xscreensaver &
+
+
+exec conky
+##exec feh --bg-scale /mnt/Programs/Documents/Pictures/1234052758667.jpg
+exec ratpoison -c "echo Welcome to Ratpoison"
+#exec ~/scripts/ratcpi.sh
+   
+
+##aliasing keys within ratpoison
+###make semicolon invoke ratpoison command, and colon shell command.
+bind semicolon colon
+bind colon exec
+
+alias term 'exec xterm'
